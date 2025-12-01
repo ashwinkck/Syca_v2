@@ -1,0 +1,32 @@
+requests>=2.31.0
+python-dotenv>=1.0.0
+
+# Local Models (Primary)
+openai-whisper>=20231117
+TTS>=0.22.0
+torch>=2.0.0
+torchaudio>=2.0.0
+
+# Audio Processing
+sounddevice>=0.4.6
+soundfile>=0.12.1
+numpy>=1.24.3
+webrtcvad>=2.0.10
+pyaudio>=0.2.14
+
+# Vision
+opencv-python>=4.8.1
+Pillow>=10.1.0
+
+# Web Interface
+flask>=3.0.0
+flask-cors>=4.0.0
+flask-socketio>=5.3.6
+python-socketio>=5.11.0
+eventlet>=0.35.2
+
+# Cloud Fallback (Optional)
+elevenlabs>=0.2.0
+
+# Utilities
+pydub>=0.25.1
