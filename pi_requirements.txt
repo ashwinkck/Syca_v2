@@ -1,0 +1,8 @@
+# Raspberry Pi Requirements
+# Lightweight dependencies for sensor capture and streaming
+
+opencv-python==4.8.0.74
+sounddevice==0.4.6
+websocket-client==1.6.1
+requests==2.31.0
+numpy==1.24.3
