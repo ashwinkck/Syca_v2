@@ -115,13 +115,18 @@ class PiClient:
                 print(f"⚠️ Audio status: {status}")
             
             try:
-                # Send audio to PC
+                # Send audio to PC (only if socket is open)
                 if self.ws and self.running:
                     # Convert float32 to int16 for smaller size
                     audio_int16 = (indata * 32767).astype(np.int16)
                     self.ws.send_binary(audio_int16.tobytes())
+            except (OSError, BrokenPipeError):
+                # Socket closed, silently ignore
+                pass
             except Exception as e:
-                print(f"❌ Audio send error: {e}")
+                # Only print other errors
+                if "closed" not in str(e).lower():
+                    print(f"❌ Audio send error: {e}")
         
         # Start audio input stream
         with sd.InputStream(

@@ -1,17 +1,18 @@
 # Raspberry Pi Requirements for pi_client.py
+# Compatible with Python 3.7 - 3.13+
 # Minimal dependencies for sensor capture and streaming only
 
-# Computer Vision
-opencv-python==4.8.0.74
+# Computer Vision (compatible with Python 3.13)
+opencv-python>=4.8.0
 
-# Audio I/O
-sounddevice==0.4.6
+# Audio I/O (compatible with Python 3.13)
+sounddevice>=0.4.6
 
 # WebSocket client for real-time audio streaming
-websocket-client==1.6.1
+websocket-client>=1.6.0
 
 # HTTP requests for video frame upload
-requests==2.31.0
+requests>=2.31.0
 
-# Numerical operations
-numpy==1.24.3
+# Numerical operations (compatible with Python 3.13)
+numpy>=1.24.0

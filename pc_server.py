@@ -3,7 +3,7 @@ PC Server for Ava Robot
 Receives camera/audio from Raspberry Pi and processes with AI models
 """
 
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Request
 from fastapi.responses import JSONResponse
 import uvicorn
 import cv2
@@ -50,16 +50,19 @@ async def root():
 
 
 @app.post("/video/frame")
-async def receive_frame(data: bytes):
+async def receive_frame(request: Request):
     """
     Receive video frame from Pi
     
     Args:
-        data: JPEG image bytes
+        request: Raw JPEG image bytes in request body
     """
     global latest_frame, latest_vision
     
     try:
+        # Read raw bytes from request body
+        data = await request.body()
+        
         # Decode JPEG
         nparr = np.frombuffer(data, np.uint8)
         frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
@@ -138,21 +141,30 @@ async def audio_stream(websocket: WebSocket):
                     try:
                         import tempfile
                         import wave
+                        import os
                         
-                        # Save to temp WAV
-                        with tempfile.NamedTemporaryFile(suffix=".wav", delete=False) as tmp:
-                            with wave.open(tmp.name, 'wb') as wav:
+                        # Create temp file
+                        tmp_fd, tmp_path = tempfile.mkstemp(suffix=".wav")
+                        
+                        try:
+                            # Write WAV file
+                            with wave.open(tmp_path, 'wb') as wav:
                                 wav.setnchannels(1)
                                 wav.setsampwidth(2)
                                 wav.setframerate(16000)
                                 audio_int16 = (full_audio * 32767).astype(np.int16)
                                 wav.writeframes(audio_int16.tobytes())
                             
-                            # Transcribe
-                            text = stt.transcribe_file(tmp.name)
+                            # Close the file descriptor
+                            os.close(tmp_fd)
                             
-                            import os
-                            os.unlink(tmp.name)
+                            # Now transcribe (file is fully closed)
+                            text = stt.transcribe_file(tmp_path)
+                        
+                        finally:
+                            # Cleanup temp file
+                            if os.path.exists(tmp_path):
+                                os.unlink(tmp_path)
                         
                         if text:
                             print(f"👤 User: {text}")
